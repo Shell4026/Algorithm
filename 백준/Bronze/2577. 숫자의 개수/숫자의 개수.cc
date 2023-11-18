@@ -11,16 +11,14 @@ int main()
 	int a, b, c;
 	std::cin >> a >> b >> c;
 
-	std::string str = std::to_string(a * b * c);
-	std::array<int, 10> cnt{};
-
-	for (auto i : str)
+	int s = a * b * c;
+	std::array<int, 10> arr{};
+	while (s != 0)
 	{
-		++cnt[i - '0'];
+		++arr[s % 10];
+		s /= 10;
 	}
-	for (auto i : cnt)
-	{
+	for (auto i : arr)
 		std::cout << i << '\n';
-	}
 	return 0;
 }
