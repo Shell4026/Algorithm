@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <map>
+#include <set>
 #include <algorithm>
 
 int main()
@@ -12,25 +12,25 @@ int main()
 	int n;
 	std::cin >> n;
 
-	std::vector<int> arr(n, 0);
+	std::set<int> set;
 	std::vector<int> original(n, 0);
 	for (int i = 0; i < n; ++i)
-		std::cin >> arr[i];
-
-	original = arr;
-	std::sort(arr.begin(), arr.end());
-	std::map<int, int> comp;
-	
-	for (int i = 0, cnt = 0; i < arr.size(); ++i)
 	{
-		if (comp.find(arr[i]) == comp.end())
-		{
-			comp.insert({arr[i], cnt++});
-		}
+		int num;
+		std::cin >> num;
+		set.insert(num);
+		original[i] = num;
 	}
+	std::vector<int> arr(set.size(), 0);
+	auto it = set.begin();
+	for (int i = 0; i < set.size(); ++i)
+	{
+		arr[i] = *it++;
+	}
+
 	for (auto i : original)
 	{
-		std::cout << comp[i] << ' ';
+		std::cout << std::lower_bound(arr.begin(), arr.end(), i) - arr.begin() << ' ';
 	}
 	return 0;
 }
