@@ -12,21 +12,17 @@ int main()
 	int n;
 	std::cin >> n;
 
-	std::set<int> set;
+	std::vector<int> arr(n, 0);
 	std::vector<int> original(n, 0);
 	for (int i = 0; i < n; ++i)
 	{
 		int num;
 		std::cin >> num;
-		set.insert(num);
+		arr[i] = num;
 		original[i] = num;
 	}
-	std::vector<int> arr(set.size(), 0);
-	auto it = set.begin();
-	for (int i = 0; i < set.size(); ++i)
-	{
-		arr[i] = *it++;
-	}
+	std::sort(arr.begin(), arr.end());
+	arr.erase(std::unique(arr.begin(), arr.end()), arr.end());
 
 	for (auto i : original)
 	{
