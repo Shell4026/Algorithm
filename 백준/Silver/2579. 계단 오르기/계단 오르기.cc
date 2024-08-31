@@ -1,51 +1,49 @@
 #include <iostream>
-#include <array>
 #include <vector>
+#include <deque>
+#include <array>
+#include <algorithm>
 
-int solve(std::vector<int> &score, std::vector<std::vector<int>>& mem, int n, bool one = false)
+std::vector<std::vector<int>> dp(2, std::vector<int>{});
+std::vector<int> score{};
+
+int Solution(int n, bool oneStep)
 {
-	if (n == 1)
-		return score[0];
-	
-	if (mem[one][n - 1] > 0)
-		return mem[one][n - 1];
+    if (n == 0)
+        return score[0];
+    if (n == 1 && oneStep)
+        return score[1];
+    if (n == 1 && !oneStep)
+        return score[0] + score[1];
 
-	if (one)
-	{
-		if (n == 2)
-			return score[1];
-
-		mem[one][n - 1] = solve(score, mem, n - 2) + score[n - 1];
-		return mem[one][n - 1];
-	}
-	else
-	{
-		if (n == 2)
-			return score[0] + score[1];
-
-		mem[one][n - 1] = std::max(solve(score, mem, n - 1, true), solve(score, mem, n - 2)) + score[n - 1];
-		return mem[one][n - 1];
-	}
+    if (dp[false][n - 2] == -1)
+        dp[false][n - 2] = Solution(n - 2, false);
+    if (oneStep)
+    {
+        return dp[false][n - 2] + score[n];
+    }
+    else
+    {
+        if (dp[true][n - 1] == -1)
+            dp[true][n - 1] = Solution(n - 1, true);
+        return std::max(dp[true][n - 1], dp[false][n - 2]) + score[n];
+    }
 }
+
 
 int main()
 {
-	std::iostream::sync_with_stdio(false);
-	std::cin.tie(nullptr);
-	std::cout.tie(nullptr);
+    int cnt = 0;
+    std::cin >> cnt;
+    dp[0].resize(cnt, -1);
+    dp[1].resize(cnt, -1);
 
-	int n;
-	std::cin >> n;
+    score.resize(cnt);
 
-	std::vector<int> scores(n, 0);
-	std::vector<std::vector<int>> mem(2, std::vector<int>(n, 0));
+    for (int i = 0; i < cnt; ++i)
+    {
+        std::cin >> score[i];
+    }
 
-	for (auto&i : scores)
-	{
-		int score;
-		std::cin >> score;
-		i = score;
-	}
-	std::cout << solve(scores, mem, n);
-	return 0;
+    std::cout << Solution(cnt - 1, false);
 }
