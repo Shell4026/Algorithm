@@ -1,50 +1,44 @@
 #include <iostream>
+#include <array>
 #include <vector>
 #include <algorithm>
+#include <utility>
 
-int solve(std::vector<int>& mem, const std::vector<int>& nums, int n = 0)
+std::vector<int> input;
+std::vector<int> dp;
+
+auto Solution(int n) -> int
 {
-    if (n == 0)
-    {
-        if (mem[n] == 0)
-            mem[n] = 1;
-        return mem[n];
-    }
-
-    if (mem[n] == 0)
-    {
-        int max = 0;
-        for (int i = 0; i < n; ++i)
-        {
-            if (mem[i] == 0)
-                mem[i] = solve(mem, nums, i);
-
-            if (nums[n] > nums[i])
-            {
-                if (mem[i] > max)
-                    max = mem[i];
-            }
-        }
-        mem[n] = max + 1;
-    }
-    return mem[n];
+	dp.push_back(input[0]);
+	for (int i = 1; i < n; ++i)
+	{
+		if (input[i] > dp.back())
+		{
+			dp.push_back(input[i]);
+		}
+		else
+		{
+			auto it = std::lower_bound(dp.begin(), dp.end(), input[i]);
+			if (*it > input[i])
+				*it = input[i];
+		}
+	}
+	return dp.size();
 }
 
 int main()
 {
-    std::cout.tie(0)->sync_with_stdio(false);
-    std::cin.tie(0);
+	std::iostream::sync_with_stdio(false);
+	std::cin.tie(nullptr);
 
-    int n;
-    std::cin >> n;
+	int n = 0;
+	std::cin >> n;
+	input.resize(n);
+	for (int i = 0; i < n; ++i)
+	{
+		std::cin >> input[i];
+	}
 
-    std::vector<int> numbers(n, 0);
-    std::vector<int> mem(n, 0);
-    for (int i = 0; i < n; ++i)
-        std::cin >> numbers[i];
-
-    solve(mem, numbers, n - 1);
-
-    std::cout << *std::max_element(mem.begin(), mem.end());
-    return 0;
+	std::cout << Solution(n);
+	return 0;
 }
