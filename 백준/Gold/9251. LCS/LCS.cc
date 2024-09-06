@@ -4,20 +4,6 @@
 #include <utility>
 #include <string>
 
-auto SetArr(std::vector<std::vector<int>> &dp, int w, int h, int addNum) -> int
-{
-    int up = 0, left = 0, upLeft = 0;
-    if (w - 1 >= 0 && h - 1 >= 0)
-        upLeft = dp[h - 1][w - 1];
-    if (w - 1 >= 0)
-        left = dp[h][w - 1];
-    if (h - 1 >= 0)
-        up = dp[h - 1][w];
-
-    dp[w][h] = std::max({up, left, upLeft}) + addNum;
-    return dp[w][h];
-}
-
 int main()
 {
     std::iostream::sync_with_stdio(false);
