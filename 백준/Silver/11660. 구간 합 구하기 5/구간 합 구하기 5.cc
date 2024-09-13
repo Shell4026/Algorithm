@@ -36,9 +36,9 @@ int main()
 	arr.resize(size, std::vector<int>(size, 0));
 	dp.resize(size, std::vector<int>(size, 0));
 
-	for (int y = 0; y < size; ++y)
+	for (int x = 0; x < size; ++x)
 	{
-		for (int x = 0; x < size; ++x)
+		for (int y = 0; y < size; ++y)
 		{
 			std::cin >> arr[x][y];
 
@@ -58,7 +58,7 @@ int main()
 		int x1, x2, y1, y2;
 		std::cin >> x1 >> y1 >> x2 >> y2;
 
-		std::cout << Solve(y1, x1, y2, x2) << '\n';
+		std::cout << Solve(x1, y1, x2, y2) << '\n';
 	}
 	return 0;
 }
