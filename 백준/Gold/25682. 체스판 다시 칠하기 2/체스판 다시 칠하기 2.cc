@@ -1,66 +1,103 @@
 #include <iostream>
+#include <array>
 #include <vector>
 #include <algorithm>
+#include <utility>
+#include <cmath>
+
+std::vector<std::vector<int>> sumBlack{};
+std::vector<std::vector<int>> sumWhite{};
 
 int main()
 {
-    std::ios::sync_with_stdio(false);
-    std::cout.tie(nullptr);
-    std::cin.tie(nullptr);
+	std::iostream::sync_with_stdio(false);
+	std::cout.tie(nullptr);
+	std::cin.tie(nullptr);
 
-    int N, M, K;
-    std::cin >> N >> M >> K;
+	int w, h, size;
+	std::cin >> h >> w >> size;
 
-    std::vector<std::vector<int>> sumBlack(N + 1, std::vector<int>(M + 1, 0));
-    std::vector<std::vector<int>> sumWhite(N + 1, std::vector<int>(M + 1, 0));
+	sumBlack.resize(h, std::vector<int>(w, 0));
+	sumWhite.resize(h, std::vector<int>(w, 0));
 
-    // 보드 입력
-    std::vector<std::string> board(N);
-    for (int i = 0; i < N; ++i)
-    {
-        std::cin >> board[i];
-    }
+	for (int y = 0; y < h; ++y)
+	{
+		for (int x = 0; x < w; ++x)
+		{
+			char color;
+			std::cin >> color;
+			bool addBlack{ false };
+			bool addWhite{ false };
 
-    // 누적 합 계산
-    for (int y = 1; y <= N; ++y)
-    {
-        for (int x = 1; x <= M; ++x)
-        {
-            char color = board[y - 1][x - 1];
-            int addBlack = 0;
-            int addWhite = 0;
+			if ((x + y) % 2 == 0)
+			{
+				addBlack = color == 'W';
+				addWhite = color == 'B';
+			}
+			else
+			{
+				addBlack = color == 'B';
+				addWhite = color == 'W';
+			}
 
-            if ((x + y) % 2 == 0)
-            {
-                // 시작 색상이 'B'인 경우
-                if (color != 'B') addBlack = 1;
-                // 시작 색상이 'W'인 경우
-                if (color != 'W') addWhite = 1;
-            }
-            else
-            {
-                if (color != 'W') addBlack = 1;
-                if (color != 'B') addWhite = 1;
-            }
+			if (x == 0 && y == 0)
+			{
+				sumBlack[y][x] = addBlack;
+				sumWhite[y][x] = addWhite;
+			}
+			else if (y == 0)
+			{
+				sumBlack[y][x] = addBlack + sumBlack[y][x - 1];
+				sumWhite[y][x] = addWhite + sumWhite[y][x - 1];
+			}
+			else if (x == 0)
+			{
+				sumBlack[y][x] = addBlack + sumBlack[y - 1][x];
+				sumWhite[y][x] = addWhite + sumWhite[y - 1][x];
+			}
+			else
+			{
+				sumBlack[y][x] = addBlack + sumBlack[y][x - 1] + sumBlack[y - 1][x] - sumBlack[y - 1][x - 1];
+				sumWhite[y][x] = addWhite + sumWhite[y][x - 1] + sumWhite[y - 1][x] - sumWhite[y - 1][x - 1];
+			}
+		}
+	}
 
-            sumBlack[y][x] = sumBlack[y - 1][x] + sumBlack[y][x - 1] - sumBlack[y - 1][x - 1] + addBlack;
-            sumWhite[y][x] = sumWhite[y - 1][x] + sumWhite[y][x - 1] - sumWhite[y - 1][x - 1] + addWhite;
-        }
-    }
+	int min{ size * size };
+	for (int y1 = 0; y1 < h - size + 1; ++y1)
+	{
+		for (int x1 = 0; x1 < w - size + 1; ++x1)
+		{
+			int x2 = x1 + size - 1;
+			int y2 = y1 + size - 1;
 
-    int minRepaint = K * K;
-    for (int y = K; y <= N; ++y)
-    {
-        for (int x = K; x <= M; ++x)
-        {
-            int totalBlack = sumBlack[y][x] - sumBlack[y - K][x] - sumBlack[y][x - K] + sumBlack[y - K][x - K];
-            int totalWhite = sumWhite[y][x] - sumWhite[y - K][x] - sumWhite[y][x - K] + sumWhite[y - K][x - K];
+			int value1{ 0 };
+			int value2{ 0 };
+			if (x1 == 0 && y1 == 0)
+			{
+				value1 = sumBlack[y2][x2];
+				value2 = sumWhite[y2][x2];
+			}
+			else if (x1 == 0)
+			{
+				value1 = sumBlack[y2][x2] - sumBlack[y1 - 1][x2];
+				value2 = sumWhite[y2][x2] - sumWhite[y1 - 1][x2];
+			}
+			else if (y1 == 0)
+			{
+				value1 = sumBlack[y2][x2] - sumBlack[y2][x1 - 1];
+				value2 = sumWhite[y2][x2] - sumWhite[y2][x1 - 1];
+			}
+			else
+			{
+				value1 = sumBlack[y2][x2] - sumBlack[y1 - 1][x2] - sumBlack[y2][x1 - 1] + sumBlack[y1 - 1][x1 - 1];
+				value2 = sumWhite[y2][x2] - sumWhite[y1 - 1][x2] - sumWhite[y2][x1 - 1] + sumWhite[y1 - 1][x1 - 1];
+			}
 
-            int currentMin = std::min(totalBlack, totalWhite);
-            minRepaint = std::min(minRepaint, currentMin);
-        }
-    }
+			min = std::min({ min, value1, value2 });
+		}
+	}
 
-    std::cout << minRepaint << "\n";
-    return 0;
+	std::cout << min;
+	return 0;
 }
