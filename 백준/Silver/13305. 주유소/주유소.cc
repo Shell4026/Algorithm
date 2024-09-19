@@ -26,17 +26,17 @@ int main()
 	{
 		if (i + 1 == n)
 		{
-			minPrice += currentPrice * dis[i];
+			minPrice += static_cast<uint64_t>(currentPrice) * dis[i];
 			break;
 		}
 		if (currentPrice > price[i + 1])
 		{
-			minPrice += currentPrice * dis[i];
+			minPrice += static_cast<uint64_t>(currentPrice) * dis[i];
 			currentPrice = price[i + 1];
 		}
 		else
 		{
-			minPrice += currentPrice * dis[i];
+			minPrice += static_cast<uint64_t>(currentPrice) * dis[i];
 		}
 	}
 	std::cout << minPrice;
